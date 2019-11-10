@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="js/menu.js"></script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   <style>
     .menu-index {
       color: rgb(255, 255, 255) !important;
@@ -37,11 +38,7 @@
         <div class="flex-row">
           <div class="flex-item flex-column">
             <p class="text add-top-margin">
-              Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel
-              augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget
-              condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit
-              vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae
-              sapien ut libero venenatis faucibus. Nullam quis ante.
+            	Hate Speech is commonly defined as any communication that disparages a person or a group on the basis of some characteristic such as race, color, ethnicity, gender, sexual orientation, nationality, religion, or other characteristics. With the rise of social media and user generated content, detecting and classifying hate speech is becoming quite important. All platforms do have some form of manual checking for this but it can’t be as fast as automated classification.
             </p>
           </div>
         </div>
@@ -49,15 +46,97 @@
         <!--Start Text Only-->
         <div class="flex-row">
           <div class="flex-item flex-column">
-            <h2 class="add-top-margin">Text Only</h2>
+            <h2 class="add-top-margin">Problem Statement</h2>
             <hr>
             <p class="text">
-              Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica,
-              sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e
-              li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar
-              custosi traductores. At solmen va esser.
+			We will be identifying if the target of hate is a single human or a group of persons and if the message author intends to be aggressive, harmful, or even to incite, in various forms, to violent acts against the target, specifically on social media platforms.
+			<ul>
+				<li>Task 1: Classify hateful tweets (where Hate Speech against women or immigrants has been identified) as aggressive or not aggressive. Note that aggressiveness is not a mandatory characteristic for all hateful texts and some text can express hate against a target in terms of disrespect without using an aggressive language.</li>
+				<li>Task 2: Classify hateful tweets to identify if the target harrased is a generic group of people or a specific individual.</li>
+			</ul>
             </p>
+          </div>
+    	</div>
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <h2 class="add-top-margin">Dataset</h2>
+            <hr>
             <p class="text">
+        	The dataset is a twitter dataset which was provided to us. 
+			<ul>
+				<li>9000 training set tweets
+				<li>1000 validation set tweets
+				<li>3783 tweets labelled as hateful.
+				<li>5217 tweets labelled as not hateful.
+			</ul>
+            </p>
+          </div>
+    	</div>
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <h2 class="add-top-margin">Approach</h2>
+            <hr>
+            <p class="text">
+			<ol>
+				<li><strong>Preprocessing :-</strong> The first big challenge was to clean and process the tweets to remove the noise and other unnecessary words, which would be quite useful for training any model and would be helpful in producing better results. 
+					<ul>
+						<li>Remove_URL: process tweets with and without removal of URL.
+						<li>Remove_Hashtags: process tweets with and without removal of Hashtag
+						<li>Remove_Swords: process tweets with and without removal of Stopwords
+						<li>Stem_tweet: process tweets with and without stemming of words using Snowball stemmer
+					</ul>
+
+				We found that the accuracy of various models change when we use the above functions to modify the tweets, in general on a positive side. Preprocessing procedure depends upon the model being used, we used all of the above functions for training our model.
+				This part was done using regular expressions to clean the tweet and select which parts of the tweets should be there, e.g. mentions, urls,etc. We didn’t use any external libraries for this part. Different results were obtained depending on which subset of things were kept e.g. mentions, urls, emojis. 
+
+				<li><strong>Data Augmentation :-</strong> As the data provided to us was just 10000 tweets, we decided on using Data Augmentation in order for our model to learn more from the data. We used two ways to augment the data. 
+					<ul>
+						<li>EDA : We did the four following operations on a training example to create a new training example
+							<ul>
+							<li>Synonym Replacement : Replace a random word with its synonym
+							<li>Random Insertion : Insert synonym of a random word at random place
+							<li>Random Swap : Randomly choose two words and swap them
+							<li>Random Deletion : Randomly remove each word with probability p=0.1
+							</ul>
+						Newly generated tweet is different from the original one. Some of these operations introduce some noise in data which makes the model more robust
+						<li>Machine translation : We convert the english tweets to some other languages such as french, german etc. Then we convert the tweets back to english. This method preserves the sentiment of the tweets but changes the words used in the tweet which results in a different new tweet altogether. 
+					</ul>
+
+				<li><strong>Convolutional Neural Networks :-</strong> Initially, the Convolutional Neural Network architecture was designed for image processing, however it has been commonly used in the sentiment analysis. CNN’s are good at extracting local and position-invariant features.  For tasks where feature detection in text is more important, for example, searching for angry terms, sadness, abuses, named entities etc. CNN’s work well which is why CNN is chosen as a model here for the tasks given. 
+				The model is as follows :
+				<ul>
+					<li>After the data is processed and padded and converted to a word embedding matrix it is fed into the embedding layer which requires the input data be integer encoded so that each word is represented by a unique integer. The Embedding layer is initialized with random weights and will learn an embedding for all of the words in the training dataset. The output of the Embedding layer is a 2D vector with one embedding for each word in the input sequence of words.
+					<li>Feature Extraction : In the feature extraction step only two layers of convolution and two layers of pooling were used, with tanh activation function. Four filters were used, 2 of 2 dimensions and 2 of 3 dimensions. Each filter refers to the classic n-grams technique (extremely used in bag-of-words based models), which consists of processing a group of n words, in order to consider not only isolated words in a tweet, but also the context in which they are inserted. The filters are applied under the vector representation of the input tweets (embedding layer), using the concept of Back propagation to adjust the weights dynamically. These filters can extract lexical, syntactic or semantic features automatically. Finally, the two layers of convolution and pooling are concatenated and directed to the next step.
+					<li>In the classification stage, we used two dense layers, the first one has 512 neurons, relu function of activation and dropout of 0.5. The second has a neuron and sigmoid activation function, phase where classification occurs. For the training, the loss and optimization functions used were binary cross entropy and RMSprop (with learning rate 0.001) respectively.
+					<li>This model is the direct implementation of the architecture proposed by Zhang and Wallace,2015.
+				</ul>
+				Two different methods after this :
+				<ul>
+					<li>Three classes were formed - Hate-Aggressive/Target, Hate-Non Aggressive/Target and Non-Hate and loss was changed to categorical crossentropy to amount for the multiple classes. However this method fares very badly due to the huge imbalance in the three classes - 2:2:5 respectively, and ultimately this method was dropped from consideration.
+					<li>The other method consists of :
+					<ul>
+						<li>At the first level - The model is trained to detect hateful tweets.
+						<li>At the second level - Only hateful tweets are taken and they are subdivided into aggressive/non-aggressive and individual/group which are again fed into the model and classified.
+						<li>This method performs considerably better than the first method due to much better class numbers.
+					</ul>
+				</ul>
+			</ol>
+            </p>
+            <img class="image center max-width-400" src="img/cnn.jpeg">
+            <!-- <p class="image-caption">Image Caption</p> -->
+          </div>
+    	</div>
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <h2 class="add-top-margin">Evaluation Metric</h2>
+            <hr>
+            <p class="text">
+				As the tasks involve us doing binary classification we don’t have a negative class at all. Hence we decided to use Accuracy as our evaluation metric.<br>
+					$$Accuracy = \frac{\#\ of\ Correct\ predictions}{\#\ of\ total\ predictions}$$
+            </p>
+          </div>
+    	</div>
+<!--             <p class="text">
               Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur,
               vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? At vero eos et accusamus et iusto odio dignissimos
               ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias
@@ -127,14 +206,12 @@
                 </p>
               </li>
               <li>
-                <p class="text-small-margin">
+                 <p class="text-small-margin">
                   Ma quande lingues coalesce, li grammatica del resultant lingue es plu simplic e regulari quam ti del
                   coalescent lingues. Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues.
                 </p>
               </li>
-            </ol>
-          </div>
-        </div>
+            </ol> -->
         <!--End Text Only-->
         <!--Start Text with Buttons-->
         <div class="flex-row">
