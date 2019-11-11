@@ -30,8 +30,14 @@
         <!--Start Intro-->
         <div class="flex-row">
           <div class="flex-item flex-column">
-            <p class="text text-large">
-              Tanuj Garg, Alok Kumar Kar, Mashrukh Islam, Saurabh Chand
+            <p class="text text-large" style="text-align:center">
+              Final Report
+            </p>
+            <p class="text text-large" style="text-align:center">
+              Group 8
+            </p>
+            <p class="text text-large" style="text-align:center">
+              Tanuj Garg (20171106), Alok Kumar Kar (20171103), Mashrukh Islam (20161137), Saurabh Chand (20161106)
             </p>
           </div>
         </div>
@@ -72,60 +78,69 @@
             </p>
           </div>
     	</div>
-        <div class="flex-row">
-          <div class="flex-item flex-column">
-            <h2 class="add-top-margin">Approach</h2>
-            <hr>
-            <p class="text">
-			<ol>
-				<li><strong>Preprocessing :-</strong><br> The first big challenge was to clean and process the tweets to remove the noise and other unnecessary words, which would be quite useful for training any model and would be helpful in producing better results. 
-					<ul>
-						<li>Remove_URL: process tweets with and without removal of URL.
-						<li>Remove_Hashtags: process tweets with and without removal of Hashtag
-						<li>Remove_Swords: process tweets with and without removal of Stopwords
-						<li>Stem_tweet: process tweets with and without stemming of words using Snowball stemmer
-					</ul>
+      <div class="flex-row">
+        <div class="flex-item flex-column">
+          <h2 class="add-top-margin">Approach</h2>
+          <hr>
+          <p class="text">
+  			<ol>
+	  			<li><strong>Preprocessing :-</strong><br> The first big challenge was to clean and process the tweets to remove the noise and other unnecessary words, which would be quite useful for training any model and would be helpful in producing better results. 
+		  			<ul>
+			  			<li>Remove_URL: process tweets with and without removal of URL.
+				  		<li>Remove_Hashtags: process tweets with and without removal of Hashtag
+					  	<li>Remove_Swords: process tweets with and without removal of Stopwords
+						  <li>Stem_tweet: process tweets with and without stemming of words using Snowball stemmer
+				  	</ul>
 
-				We found that the accuracy of various models change when we use the above functions to modify the tweets, in general on a positive side. Preprocessing procedure depends upon the model being used, we used all of the above functions for training our model.<br>
-				This part was done using regular expressions to clean the tweet and select which parts of the tweets should be there, e.g. mentions, urls,etc. We didn’t use any external libraries for this part. Different results were obtained depending on which subset of things were kept e.g. mentions, urls, emojis. 
+          We found that the accuracy of various models change when we use the above functions to modify the tweets, in general on a positive side. Preprocessing procedure depends upon the model being used, we used all of the above functions for training our model.<br>
+          This part was done using regular expressions to clean the tweet and select which parts of the tweets should be there, e.g. mentions, urls,etc. We didn’t use any external libraries for this part. Different results were obtained depending on which subset of things were kept e.g. mentions, urls, emojis. 
 
-				<li><strong>Data Augmentation :-</strong><br> As the data provided to us was just 10000 tweets, we decided on using Data Augmentation in order for our model to learn more from the data. We used two ways to augment the data. 
-					<ul>
-						<li>EDA : We did the four following operations on a training example to create a new training example
-							<ul>
-							<li>Synonym Replacement : Replace a random word with its synonym
-							<li>Random Insertion : Insert synonym of a random word at random place
-							<li>Random Swap : Randomly choose two words and swap them
-							<li>Random Deletion : Randomly remove each word with probability p=0.1
-							</ul>
-						Newly generated tweet is different from the original one. Some of these operations introduce some noise in data which makes the model more robust
-						<li>Machine translation : We convert the english tweets to some other languages such as french, german etc. Then we convert the tweets back to english. This method preserves the sentiment of the tweets but changes the words used in the tweet which results in a different new tweet altogether. 
-					</ul>
+          <li><strong>Data Augmentation :-</strong><br> As the data provided to us was just 10000 tweets, we decided on using Data Augmentation in order for our model to learn more from the data. We used two ways to augment the data. 
+            <ul>
+              <li>EDA : We did the four following operations on a training example to create a new training example
+                <ul>
+                <li>Synonym Replacement : Replace a random word with its synonym
+                <li>Random Insertion : Insert synonym of a random word at random place
+                <li>Random Swap : Randomly choose two words and swap them
+                <li>Random Deletion : Randomly remove each word with probability p=0.1
+                </ul>
+              Newly generated tweet is different from the original one. Some of these operations introduce some noise in data which makes the model more robust
+              <li>Machine translation : We convert the english tweets to some other languages such as french, german etc. Then we convert the tweets back to english. This method preserves the sentiment of the tweets but changes the words used in the tweet which results in a different new tweet altogether. 
+            </ul>
 
-				<li><strong>Convolutional Neural Networks :-</strong><br> Initially, the Convolutional Neural Network architecture was designed for image processing, however it has been commonly used in the sentiment analysis. CNN’s are good at extracting local and position-invariant features.  For tasks where feature detection in text is more important, for example, searching for angry terms, sadness, abuses, named entities etc. CNN’s work well which is why CNN is chosen as a model here for the tasks given. 
-				The model is as follows :
-				<ul>
-					<li>After the data is processed and padded and converted to a word embedding matrix it is fed into the embedding layer which requires the input data be integer encoded so that each word is represented by a unique integer. The Embedding layer is initialized with random weights and will learn an embedding for all of the words in the training dataset. The output of the Embedding layer is a 2D vector with one embedding for each word in the input sequence of words.
-					<li>Feature Extraction : In the feature extraction step only two layers of convolution and two layers of pooling were used, with tanh activation function. Four filters were used, 2 of 2 dimensions and 2 of 3 dimensions. Each filter refers to the classic n-grams technique (extremely used in bag-of-words based models), which consists of processing a group of n words, in order to consider not only isolated words in a tweet, but also the context in which they are inserted. The filters are applied under the vector representation of the input tweets (embedding layer), using the concept of Back propagation to adjust the weights dynamically. These filters can extract lexical, syntactic or semantic features automatically. Finally, the two layers of convolution and pooling are concatenated and directed to the next step.
-					<li>In the classification stage, we used two dense layers, the first one has 512 neurons, relu function of activation and dropout of 0.5. The second has a neuron and sigmoid activation function, phase where classification occurs. For the training, the loss and optimization functions used were binary cross entropy and RMSprop (with learning rate 0.001) respectively.
-					<li>This model is the direct implementation of the architecture proposed by Zhang and Wallace,2015.
-				</ul>
-				Two different methods after this :
-				<ul>
-					<li>Three classes were formed - Hate-Aggressive/Target, Hate-Non Aggressive/Target and Non-Hate and loss was changed to categorical crossentropy to amount for the multiple classes. However this method fares very badly due to the huge imbalance in the three classes - 2:2:5 respectively, and ultimately this method was dropped from consideration.
-					<li>The other method consists of :
-					<ul>
-						<li>At the first level - The model is trained to detect hateful tweets.
-						<li>At the second level - Only hateful tweets are taken and they are subdivided into aggressive/non-aggressive and individual/group which are again fed into the model and classified.
-						<li>This method performs considerably better than the first method due to much better class numbers.
-					</ul>
-				</ul>
-			</ol>
-            </p>
-            <img class="image center" src="img/cnn.jpeg">
-            <img class="image center" src="img/cnn_layers.jpeg">
-          </div>
-    	</div>
+          <li><strong>Convolutional Neural Networks :-</strong><br> Initially, the Convolutional Neural Network architecture was designed for image processing, however it has been commonly used in the sentiment analysis. CNN’s are good at extracting local and position-invariant features.  For tasks where feature detection in text is more important, for example, searching for angry terms, sadness, abuses, named entities etc. CNN’s work well which is why CNN is chosen as a model here for the tasks given. 
+          The model is as follows :
+          <ul>
+            <li>After the data is processed and padded and converted to a word embedding matrix it is fed into the embedding layer which requires the input data be integer encoded so that each word is represented by a unique integer. The Embedding layer is initialized with random weights and will learn an embedding for all of the words in the training dataset. The output of the Embedding layer is a 2D vector with one embedding for each word in the input sequence of words.
+            <li>Feature Extraction : In the feature extraction step only two layers of convolution and two layers of pooling were used, with tanh activation function. Four filters were used, 2 of 2 dimensions and 2 of 3 dimensions. Each filter refers to the classic n-grams technique (extremely used in bag-of-words based models), which consists of processing a group of n words, in order to consider not only isolated words in a tweet, but also the context in which they are inserted. The filters are applied under the vector representation of the input tweets (embedding layer), using the concept of Back propagation to adjust the weights dynamically. These filters can extract lexical, syntactic or semantic features automatically. Finally, the two layers of convolution and pooling are concatenated and directed to the next step.
+            <li>In the classification stage, we used two dense layers, the first one has 512 neurons, relu function of activation and dropout of 0.5. The second has a neuron and sigmoid activation function, phase where classification occurs. For the training, the loss and optimization functions used were binary cross entropy and RMSprop (with learning rate 0.001) respectively.
+            <li>This model is the direct implementation of the architecture proposed by Zhang and Wallace,2015.
+          </ul>
+          Two different methods after this :
+          <ul>
+            <li>Three classes were formed - Hate-Aggressive/Target, Hate-Non Aggressive/Target and Non-Hate and loss was changed to categorical crossentropy to amount for the multiple classes. However this method fares very badly due to the huge imbalance in the three classes - 2:2:5 respectively, and ultimately this method was dropped from consideration.
+            <li>The other method consists of :
+            <ul>
+              <li>At the first level - The model is trained to detect hateful tweets.
+              <li>At the second level - Only hateful tweets are taken and they are subdivided into aggressive/non-aggressive and individual/group which are again fed into the model and classified.
+              <li>This method performs considerably better than the first method due to much better class numbers.
+            </ul>
+          </ul>
+          <img class="image center" src="img/cnn.jpeg">
+          <img class="image center" src="img/cnn_layers.jpeg">
+          <li><strong>Long Short-Term Memory Model :-</strong><br> RNN has obtained much attention because of their superior ability to preserve sequence information over time. Recurrent Neural Network (RNN) is one of the most popular architectures used in Natural Language Processing (NLP) tasks because its recurrent structure is very suitable to process variable length text. This ability to preserve information over long sequences without the problem of exploding and vanishing gradients is why Bi-LSTM (a specific type of RNN) is chosen as the second sequence model here for the tasks given.
+            The model is as follows :
+            <ul>
+              <li>After the data is processed and padded and converted to a word embedding matrix it is fed into the embedding layer which requires the input data be integer encoded so that each word is represented by a unique integer. The Embedding layer is initialized with random weights and will learn an embedding for all of the words in the training dataset. The output of the Embedding layer is a 2D vector with one embedding for each word in the input sequence of words.
+              <li>Feature Extraction : A simple bidirectional LSTM(Hidden dimension = 100) with two fully connected layers is added which takes care of the context in which the word appears both looking ahead of it and looking behind which is done by feeding inputs into one LSTM layer in the correct time order and and into the other LSTM layer in the reverse time order. The output of these two layers are merged into one and global max pooling is applied, the output of which is fed into the classification stage.
+              <li>In the classification stage, we used two dense layers, the first one has 100 neurons, relu function of activation and dropout of 0.1 .The second has a neuron and sigmoid activation function, phase where classification occurs. For the training, the loss and optimization functions used were binary cross entropy and RMSprop (with learning rate 0.01) respectively.
+              <li>Architecture Diagram of the model : <br>
+            </ul>
+          </ol>
+        <img class="image center" src="img/lsmt_layers.jpeg">
+      </p>
+      </div>
+    </div>
         <div class="flex-row">
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Evaluation Metric</h2>
@@ -139,7 +154,7 @@
     	  </div>
         <div class="flex-row">
           <div class="flex-item flex-column">
-            <h2 class="add-top-margin">Results</h2>
+            <h2 class="add-top-margin" id="results">Results</h2>
             <hr>
             <p class="text">
               The following are the best results that were obtained and results after applying data augmentation.
@@ -167,10 +182,10 @@
                 <li>Support Vector Machine Model
                   <ul>
                     <li>Aggression Detection : <br>
-                      60.76% accuracy, after stemming and cleaning emojis & mentions, but without including length as a feature
+                      62.17% accuracy, after stemming and cleaning emojis & mentions, but without including length as a feature
                       <img class="image center max-width-400" src="img/svm1.jpeg">
                     <li>Target Identification : <br>
-                      81.8% accuracy, without stemming, without cleaning out emojis & mentions and without including length as a feature
+                      88.89% accuracy, without stemming, without cleaning out emojis & mentions and without including length as a feature
                       <img class="image center max-width-400" src="img/svm2.jpeg">
                   </ul>
 
@@ -247,9 +262,9 @@
                       <td>3783</td>
                       <td>5217</td>
                       <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
+                      <td>Total</td>
+                      <td>3783</td>
+                      <td>5217</td>
                     </tr>
                   </table>
                   <ol>
@@ -290,6 +305,13 @@
                 These are the correlation graphs between the lengths of tweets and accuracy of our models. We also found that removing URLs from the data reduces our model’s accuracy by a very marginal amount.
               </p>
             </div>
+          </div>
+          <div class="flex-row">
+              <div class="flex-item flex-column">
+                <h2 class="add-top-margin" id="video">Youtube Video</h2>
+                <hr>
+                <iframe width="560" height="315" style="" src="https://www.youtube.com/embed/aJOTlE1K90k" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
           </div>
   <!--             <p class="text">
               Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur,
@@ -369,7 +391,7 @@
             </ol> -->
         <!--End Text Only-->
         <!--Start Text with Buttons-->
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Text with Buttons and Inputs</h2>
             <hr>
@@ -491,7 +513,7 @@
         </div>
         <!--End Text with Buttons-->
         <!--Start Text with Images and Image buttons-->
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Text with Images and Image Buttons</h2>
             <hr>
@@ -524,10 +546,10 @@
               custosi traductores. At solmen va esser.
             </p>
           </div>
-        </div>
+        </div> -->
         <!--End Text with Images and Image buttons-->
         <!--Start Text around Image-->
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Text around Image</h2>
             <hr>
@@ -548,10 +570,10 @@
               impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis.
             </p>
           </div>
-        </div>
+        </div> -->
         <!--End Text around Image-->
         <!--Start Text with Centered Image-->
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Text with Centered Image</h2>
             <hr>
@@ -569,10 +591,10 @@
               custosi traductores. At solmen va esser.
             </p>
           </div>
-        </div>
+        </div> -->
         <!--End Text with Centered Image-->
         <!--Start Text with Adaptive Image-->
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Text with Adaptive Image</h2>
             <hr>
@@ -590,10 +612,10 @@
               custosi traductores. At solmen va esser.
             </p>
           </div>
-        </div>
+        </div> -->
         <!--End Text with Adaptive Image-->
         <!--Start Text with Images and Videos-->
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Text with Images and Videos</h2>
             <hr>
@@ -688,9 +710,9 @@
               custosi traductores. At solmen va esser.
             </p>
           </div>
-        </div>
+        </div> -->
         <!--End Text with Images and Videos-->
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Text with Iframe</h2>
             <hr>
@@ -708,9 +730,9 @@
               vel, luctus pulvinar, hendrerit id, lorem.
             </p>
           </div>
-        </div>
+        </div> -->
         <!--Start Text with Gallery-->
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="flex-item flex-column">
             <h2 class="add-top-margin">Text with Gallery (Responsive Size)</h2>
             <hr>
@@ -757,10 +779,10 @@
               vel, luctus pulvinar, hendrerit id, lorem.
             </p>
           </div>
-        </div>
+        </div> -->
         <!--End Text with Gallery-->
         <!--Start List of Projects-->
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="flex-item flex-column full-width">
             <h2 class="add-top-margin">List of Projects</h2>
             <hr>
@@ -804,17 +826,17 @@
               condimentum rhoncus, sem quam semper libero, sit amet.
             </p>
           </div>
-        </div>
+        </div> -->
         <!--End List of Projects-->
         <!--Start Credits-->
-        <div class="flex-row">
+        <!-- <div class="flex-row">
           <div class="flex-item flex-item-stretch flex-column">
             <p class="text text-small text-italic">
               Credits: <span class="highlight-text">Organization One</span>: Author One and Author Two / <span class="highlight-text">Organization Two</span>: Author Three and Author Four
             </p>
           </div>
-        </div>
-        <!--End Credits-->
+        </div> -->
+        <!-- End Credits -->
       </div>
     </div>
   </div>
