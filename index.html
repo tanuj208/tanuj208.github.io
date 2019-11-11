@@ -78,7 +78,7 @@
             <hr>
             <p class="text">
 			<ol>
-				<li><strong>Preprocessing :-</strong> The first big challenge was to clean and process the tweets to remove the noise and other unnecessary words, which would be quite useful for training any model and would be helpful in producing better results. 
+				<li><strong>Preprocessing :-</strong><br> The first big challenge was to clean and process the tweets to remove the noise and other unnecessary words, which would be quite useful for training any model and would be helpful in producing better results. 
 					<ul>
 						<li>Remove_URL: process tweets with and without removal of URL.
 						<li>Remove_Hashtags: process tweets with and without removal of Hashtag
@@ -86,10 +86,10 @@
 						<li>Stem_tweet: process tweets with and without stemming of words using Snowball stemmer
 					</ul>
 
-				We found that the accuracy of various models change when we use the above functions to modify the tweets, in general on a positive side. Preprocessing procedure depends upon the model being used, we used all of the above functions for training our model.
+				We found that the accuracy of various models change when we use the above functions to modify the tweets, in general on a positive side. Preprocessing procedure depends upon the model being used, we used all of the above functions for training our model.<br>
 				This part was done using regular expressions to clean the tweet and select which parts of the tweets should be there, e.g. mentions, urls,etc. We didn’t use any external libraries for this part. Different results were obtained depending on which subset of things were kept e.g. mentions, urls, emojis. 
 
-				<li><strong>Data Augmentation :-</strong> As the data provided to us was just 10000 tweets, we decided on using Data Augmentation in order for our model to learn more from the data. We used two ways to augment the data. 
+				<li><strong>Data Augmentation :-</strong><br> As the data provided to us was just 10000 tweets, we decided on using Data Augmentation in order for our model to learn more from the data. We used two ways to augment the data. 
 					<ul>
 						<li>EDA : We did the four following operations on a training example to create a new training example
 							<ul>
@@ -102,7 +102,7 @@
 						<li>Machine translation : We convert the english tweets to some other languages such as french, german etc. Then we convert the tweets back to english. This method preserves the sentiment of the tweets but changes the words used in the tweet which results in a different new tweet altogether. 
 					</ul>
 
-				<li><strong>Convolutional Neural Networks :-</strong> Initially, the Convolutional Neural Network architecture was designed for image processing, however it has been commonly used in the sentiment analysis. CNN’s are good at extracting local and position-invariant features.  For tasks where feature detection in text is more important, for example, searching for angry terms, sadness, abuses, named entities etc. CNN’s work well which is why CNN is chosen as a model here for the tasks given. 
+				<li><strong>Convolutional Neural Networks :-</strong><br> Initially, the Convolutional Neural Network architecture was designed for image processing, however it has been commonly used in the sentiment analysis. CNN’s are good at extracting local and position-invariant features.  For tasks where feature detection in text is more important, for example, searching for angry terms, sadness, abuses, named entities etc. CNN’s work well which is why CNN is chosen as a model here for the tasks given. 
 				The model is as follows :
 				<ul>
 					<li>After the data is processed and padded and converted to a word embedding matrix it is fed into the embedding layer which requires the input data be integer encoded so that each word is represented by a unique integer. The Embedding layer is initialized with random weights and will learn an embedding for all of the words in the training dataset. The output of the Embedding layer is a 2D vector with one embedding for each word in the input sequence of words.
@@ -122,8 +122,8 @@
 				</ul>
 			</ol>
             </p>
-            <img class="image center max-width-400" src="img/cnn.jpeg">
-            <!-- <p class="image-caption">Image Caption</p> -->
+            <img class="image center" src="img/cnn.jpeg">
+            <img class="image center" src="img/cnn_layers.jpeg">
           </div>
     	</div>
         <div class="flex-row">
@@ -131,12 +131,167 @@
             <h2 class="add-top-margin">Evaluation Metric</h2>
             <hr>
             <p class="text">
-				As the tasks involve us doing binary classification we don’t have a negative class at all. Hence we decided to use Accuracy as our evaluation metric.<br>
-					$$Accuracy = \frac{\#\ of\ Correct\ predictions}{\#\ of\ total\ predictions}$$
+              As the tasks involve us doing binary classification we don’t have a negative class at all. Hence we decided to use Accuracy as our evaluation metric.<br>
+              <img class="image center max-width-400" src="img/accuracy.jpeg">
+        
             </p>
           </div>
-    	</div>
-<!--             <p class="text">
+    	  </div>
+        <div class="flex-row">
+          <div class="flex-item flex-column">
+            <h2 class="add-top-margin">Results</h2>
+            <hr>
+            <p class="text">
+              The following are the best results that were obtained and results after applying data augmentation.
+              <ol>
+                <li>Naive Bayes Model
+                  <ul>
+                    <li>Aggression Detection : <br>
+                      65.25% accuracy, without stemming, without cleaning emojis and mentions & without including length as a feature
+                      <img class="image center max-width-400" src="img/nb1.jpeg">
+                    <li>Target Identification : <br>
+                      89.6% accuracy, after cleaning out emojis but without stem, without cleaning emojis and without including length as a feature
+                      <img class="image center max-width-400" src="img/nb2.jpeg">
+                  </ul>
+
+                <li>Logistic Regression Model
+                  <ul>
+                    <li>Aggression Detection : <br>
+                      65.25% accuracy, after stemming and cleaning mentions but without cleaning emojis and without including length as a feature
+                      <img class="image center max-width-400" src="img/lr1.jpeg">
+                    <li>Target Identification : <br>
+                      88.89% accuracy, after cleaning mentions, but without stemming, without cleaning emojis and without including length as a feature
+                      <img class="image center max-width-400" src="img/lr2.jpeg">
+                  </ul>
+
+                <li>Support Vector Machine Model
+                  <ul>
+                    <li>Aggression Detection : <br>
+                      60.76% accuracy, after stemming and cleaning emojis & mentions, but without including length as a feature
+                      <img class="image center max-width-400" src="img/svm1.jpeg">
+                    <li>Target Identification : <br>
+                      81.8% accuracy, without stemming, without cleaning out emojis & mentions and without including length as a feature
+                      <img class="image center max-width-400" src="img/svm2.jpeg">
+                  </ul>
+
+                <li>Convolutional Neural Network Model
+                  <ul>
+                      <li>Hate Speech Identification : <br>
+                        73.5% accuracy, without stemming, hashtag removal, url removal and cleaning, using Common Crawl Glove 300d embeddings
+                      <li>Aggression Detection : <br>
+                        Classifying Hateful tweets first and then using hateful tweets to predict Aggressive tweets<br>
+                        67.21% accuracy, without stemming, hashtag removal, url removal and cleaning, using FastText Embeddings
+                        <img class="image center max-width-400" src="img/cnn1.jpeg">
+                    <li>Target Identification : <br>
+                        Classifying Hateful tweets first and then using hateful tweets to predict Target : Individual or Group<br>
+                        89.93% accuracy, without stemming, hashtag removal, url removal and cleaning, using Common Crawl Glove 300d embeddings
+                        <img class="image center max-width-400" src="img/cnn2.jpeg">
+                  </ul>
+
+                <li>Long short-term memory Model
+                  <ul>
+                    <li>Aggression Detection : <br>
+                      Classifying Hateful tweets first and then using hateful tweets to predict Aggressive tweets<br>
+                      59.7% accuracy
+                      <img class="image center max-width-400" src="img/lstm1.jpeg">
+                    <li>Target Identification : <br>
+                      Classifying Hateful tweets first and then using hateful tweets to predict Target : Individual or Group<br>
+                      79.62% accuracy
+                      <img class="image center max-width-400" src="img/lstm2.jpeg">
+                  </ul>
+                </ol>
+            </p>
+          </div>
+    	  </div>
+        <div class="flex-row">
+            <div class="flex-item flex-column">
+              <h2 class="add-top-margin">Analysis</h2>
+              <hr>
+              <p class="text">
+                  We found that CNNs give the best results here compared to LSTMS as LSTMs usually are good at predicting what comes next in a sequence while CNNs can learn to classify a sentence or a paragraph; hence the observation. CNN is looking for the same patterns over different regions of text. For example, one can use a CNN with a softmax classifier at the end, to classify a piece of text - say for sentiment analysis. While LSTMs solve the inherent problems in RNNs, they still are not better than a pure CNN for classification. 
+                  CNNs are inherently faster than and much less computationally expensive compared to RNN and LSTM which are difficult to train because they require memory-bandwidth-bound computation. <br>
+                  We also perform some data analysis on the given dataset.<br>
+                  Maximum tweet length: 63<br>
+                  Average tweet length: 22.12<br>
+                  Minimum tweet length: 1<br>
+                  <table id="customers">
+                    <tr>
+                      <td></td>
+                      <td>Hateful</td>
+                      <td>Non-Hateful</td>
+                      <td></td>
+                      <td></td>
+                      <td>Hateful</td>
+                      <td>Non-Hateful</td>
+                    </tr>
+                    <tr>
+                      <td>Aggressive</td>
+                      <td>1559</td>
+                      <td>0</td>
+                      <td></td>
+                      <td>Individual</td>
+                      <td>1341</td>
+                      <td>0</td>
+                    </tr>
+                    <tr>
+                      <td>Non-Aggressive</td>
+                      <td>2224</td>
+                      <td>5217</td>
+                      <td></td>
+                      <td>Group</td>
+                      <td>2442</td>
+                      <td>5217</td>
+                    </tr>
+                    <tr>
+                      <td>Total</td>
+                      <td>3783</td>
+                      <td>5217</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </table>
+                  <ol>
+                    <li>Misclassification Errors found<br>
+                      <ul>
+                        <li>Task 1: <br>Non-aggressive classified as Aggressive<br>
+                          <ul>
+                            <li>USER USER Shut the fuck up dumb bitch. If you dont like it dont fucking reply You childish slut</li>
+                            <li>Another fucking piece of a crap. You have gone too far in chasing mirages, Kashmiri women do not sleep around with RSS men, you fucking cunt, there is no sanity left in you now. You must have heard that phrase. 'Langoor Ke haath angoor' this shit is similar.</li>
+                          </ul>
+                        Aggressive classified as Non-aggressive<br>
+                          <ul>
+                            <li>USER Most hysterical woman. Nice gender separation. Person, Ann. I get it's hard for you to grasp not being one but please try.</li>
+                            <li>USER it is has been said the Uk needs " million new Houses because of Immigration what we need is 2 million less Immigrants</li>
+                          </ul>
+                        <li>Task 2: <br>Group targets classified as Individual<br>
+                          <ul>
+                            <li>USER I need you pussy</li>
+                            <li>I hate bitches who talk about niggaz with kids , Everybody cant find a bitch like yal that abort all they pregnancies soo STFU hoe ....</li>
+                          </ul>
+                          Individual targets classified as Group<br>
+                          <ul>
+                            <li>Illegal alien deported 15 times arrested in hit-run crash that hurt 6-year-old https://t.co/sR2vKcURkO #StopTheInvasion #SecureTheBorder</li>
+                            <li>USER USER Hi USER. Is there a way to get the ladies to stop shouting out during the hearing? It's having the opposite of the desired effect. I love the silent handmaids. But screaming hysterical women is just insulting to the cause. Maybe they can hold up signs instead?</li>
+                          </ul>
+                          Misclassification errors show that in some places the data is labeled incorrectly.
+                      </ul>
+                    <li>Length Correlation Results:<br>
+                      <ul>
+                        <li> Naive Bayes : 
+                        <img class="image center" src="img/nb_len.jpeg">
+                        <li> SVM : 
+                        <img class="image center" src="img/svm_len.jpeg">
+                        <li> Logistic Regression : 
+                        <img class="image center" src="img/lr_len.jpeg">
+                      </ul>
+                  </ol>
+                These are the correlation graphs between the lengths of tweets and accuracy of our models. We also found that removing URLs from the data reduces our model’s accuracy by a very marginal amount.
+              </p>
+            </div>
+          </div>
+  <!--             <p class="text">
               Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur,
               vel illum qui dolorem eum fugiat quo voluptas nulla pariatur? At vero eos et accusamus et iusto odio dignissimos
               ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias
